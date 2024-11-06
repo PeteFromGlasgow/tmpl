@@ -28,18 +28,23 @@ init () {
   fi
   
   cp -r "$projectTemplateDir/$src" "$dest"
-  rm -f "$dest/.git"
+  rm -rf "$dest/.git"
   (cd $dest && git init)
+  if [ -f "$dest/tmpl-init" ]; then
+    (cd $dest && TMPL_NAME=$(basename $dest) . tmpl-init)
+  fi
 }
 
 if [ "$projectTemplateDir" = "" ]; then
   echo "You need to set the project template directory. You can either do this by setting PROJECT_TEMPLATE_DIR or creating a .tmplrc file in your home dir"
+  exit 128
 fi
 
 arg=$1
 
 if [ "$arg" = "" ]; then
   printUsage
+  exit 0
 fi
 
 case "$arg" in
