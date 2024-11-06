@@ -1,11 +1,13 @@
 #!/bin/bash
 if [ -f ~/.tmplrc ]; then
-  . ~/tmplrc
+  . ~/.tmplrc
 fi
 
 projectTemplateDir="${PROJECT_TEMPLATE_DIR}"
 
 printUsage() {
+  echo "tmpl - The super lightweigt project template utility"
+  echo ""
   echo "Usage"
   echo "  ls | list:                   List Project Templates"
   echo "  init <template> <dest>:      Initialize a template into a new directory"
