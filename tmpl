@@ -34,12 +34,28 @@ init () {
 
   # Check for tmpl-init and prompt before execution
   if [ -f "$dest/tmpl-init" ]; then
-    echo "Template includes an initialization script: '$dest/tmpl-init'"
+    tmpl_init_script="$dest/tmpl-init"
+    echo "Template includes an initialization script: '$tmpl_init_script'"
+
+    # Prompt to view/edit the script
+    read -p "Do you want to view/edit it before proceeding? (y/N): " view_edit_confirm
+    case "$view_edit_confirm" in
+      [yY]|[yY][eE][sS])
+        editor="${VISUAL:-${EDITOR:-vi}}" # Use VISUAL, EDITOR, or fallback to vi
+        echo "Opening '$tmpl_init_script' with $editor..."
+        "$editor" "$tmpl_init_script" # Open the script in the chosen editor
+        ;;
+      *)
+        echo "Skipping view/edit."
+        ;;
+    esac
+
+    # Prompt to execute the script (potentially after viewing/editing)
     read -p "Do you want to execute it? (y/N): " confirm
     case "$confirm" in
       [yY]|[yY][eE][sS])
         echo "Executing tmpl-init..."
-        (cd "$dest" && TMPL_NAME="$(basename "$dest")" . tmpl-init)
+        (cd "$dest" && TMPL_NAME="$(basename "$dest")" . "$tmpl_init_script")
         ;;
       *)
         echo "Skipping tmpl-init execution."
@@ -50,6 +66,7 @@ init () {
 
 if [ "$projectTemplateDir" = "" ]; then
   echo "You need to set the project template directory (\$PROJECT_TEMPLATE_DIR). You can either do this by setting PROJECT_TEMPLATE_DIR or creating a .tmplrc file in your home dir"
+  echo "Example: export PROJECT_TEMPLATE_DIR=~/project-templates"
   exit 128
 fi
 
