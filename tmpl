@@ -29,10 +29,10 @@ init () {
     exit 2
   fi
   cp -r "${projectTemplateDir}/${src}" "$dest"
-  rm -rf "$dest/.git" # Quote $dest
-  (cd "$dest" && git init) # Quote $dest
-  if [ -f "$dest/tmpl-init" ]; then # Quote $dest
-    (cd "$dest" && TMPL_NAME="$(basename "$dest")" . tmpl-init) # Quote $dest in cd and basename
+  rm -rf "$dest/.git"
+  (cd "$dest" && git init)
+  if [ -f "$dest/tmpl-init" ]; then
+    (cd "$dest" && TMPL_NAME="$(basename "$dest")" . tmpl-init)
   fi
 }
 
