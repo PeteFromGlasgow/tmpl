@@ -31,8 +31,20 @@ init () {
   cp -r "${projectTemplateDir}/${src}" "$dest"
   rm -rf "$dest/.git"
   (cd "$dest" && git init)
+
+  # Check for tmpl-init and prompt before execution
   if [ -f "$dest/tmpl-init" ]; then
-    (cd "$dest" && TMPL_NAME="$(basename "$dest")" . tmpl-init)
+    echo "Template includes an initialization script: '$dest/tmpl-init'"
+    read -p "Do you want to execute it? (y/N): " confirm
+    case "$confirm" in
+      [yY]|[yY][eE][sS])
+        echo "Executing tmpl-init..."
+        (cd "$dest" && TMPL_NAME="$(basename "$dest")" . tmpl-init)
+        ;;
+      *)
+        echo "Skipping tmpl-init execution."
+        ;;
+    esac
   fi
 }
 
