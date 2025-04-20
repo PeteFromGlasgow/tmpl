@@ -17,28 +17,27 @@ init () {
   src="$1"
   dest="$2"
 
-  if [ "$src" = "" ] | [ "$dest" = "" ]; then
+  if [ "$src" = "" ] || [ "$dest" = "" ]; then
     echo "Missing source or destination"
     echo ""
     printUsage
     exit 1
   fi
 
-  if [ ! -d "$projectTemplateDir/$src" ]; then
-    echo "Project template $projectTemplateDir/$src does not exist"
-    exit 2 
+  if [ ! -d "${projectTemplateDir}/${src}" ]; then
+    echo "Project template \"${projectTemplateDir}/${src}\" does not exist"
+    exit 2
   fi
-  
-  cp -r "$projectTemplateDir/$src" "$dest"
-  rm -rf "$dest/.git"
-  (cd $dest && git init)
-  if [ -f "$dest/tmpl-init" ]; then
-    (cd $dest && TMPL_NAME=$(basename $dest) . tmpl-init)
+  cp -r "${projectTemplateDir}/${src}" "$dest"
+  rm -rf "$dest/.git" # Quoting $dest here
+  (cd "$dest" && git init) # Quoting $dest here
+  if [ -f "$dest/tmpl-init" ]; then # Quoting $dest here
+    (cd "$dest" && TMPL_NAME="$(basename "$dest")" . tmpl-init) # Quoting $dest here twice and the assignment
   fi
 }
 
 if [ "$projectTemplateDir" = "" ]; then
-  echo "You need to set the project template directory. You can either do this by setting PROJECT_TEMPLATE_DIR or creating a .tmplrc file in your home dir"
+  echo "You need to set the project template directory (\$PROJECT_TEMPLATE_DIR). You can either do this by setting PROJECT_TEMPLATE_DIR or creating a .tmplrc file in your home dir"
   exit 128
 fi
 
@@ -51,10 +50,10 @@ fi
 
 case "$arg" in
   ls|list)
-    ls $projectTemplateDir
+    ls "$projectTemplateDir"
   ;;
   init)
-    init $2 $3
+    init "$2" "$3"
   ;;
   *)
     printUsage
